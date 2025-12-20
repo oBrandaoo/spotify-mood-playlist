@@ -1,4 +1,5 @@
 require('dotenv').config();
+const axios = require('axios');
 const express = require('express');
 const path = require('path');
 const passport = require('passport')
@@ -83,6 +84,7 @@ app.get('/api/user', ensureAuthenticated, (req, res) => {
 app.get('/api/generate-playlist', ensureAuthenticated, async (req, res) => {
   const mood = req.query.mood;
   const accessToken = req.user.accessToken;
+  const userId = req.user.id;
 
   if (!accessToken) {
     return res.status(401).json({ error: 'Usuário não autenticado.' });
@@ -97,22 +99,48 @@ app.get('/api/generate-playlist', ensureAuthenticated, async (req, res) => {
   const query = searchQueries[mood] || 'happy';
 
   try {
-    const response = await axios.get('https://api.spotify.com/v1/search', {
-      headers: {
-        'Authorization': `Bearer ${accessToken}`
+    const searchResponse = await axios.get('https://api.spotify.com/v1/search', {
+      headers: { 'Authorization': `Bearer ${accessToken}` },
+      params: { q: query, type: 'track', limit: 10 }
+    });
+    const tracks = searchResponse.data.tracks.items;
+    const trackUris = tracks.map(track => track.uri);
+
+    if (tracks.length === 0) {
+      return res.json({ error: 'Nenhuma música encontrada para este humor.' });
+    }
+
+    const createPlaylistResponse = await axios.post(`https://api.spotify.com/v1/users/${userId}/playlists`, 
+      {
+        name: `Playlist ${mood} - Gerada por App`,
+        description: `Uma playlist para o humor "${mood}", criada automaticamente.`,
+        public: false
       },
-      params: {
-        q: query,
-        type: 'track',
-        limit: 10
+      {
+        headers: { 'Authorization': `Bearer ${accessToken}` }
       }
+    );
+    const newPlaylist = createPlaylistResponse.data;
+    const playlistId = newPlaylist.id;
+
+    await axios.post(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
+      {
+        uris: trackUris
+      },
+      {
+        headers: { 'Authorization': `Bearer ${accessToken}` }
+      }
+    );
+
+    res.json({ 
+      success: true,
+      message: `Playlist "${newPlaylist.name}" criada com sucesso!`,
+      playlistUrl: newPlaylist.external_urls.spotify
     });
 
-    res.json(response.data.tracks.items);
-
   } catch (error) {
-    console.error('Erro ao buscar músicas no Spotify:', error.response ? error.response.data : error.message);
-    res.status(500).json({ error: 'Falha ao buscar músicas.' });
+    console.error('Erro ao criar playlist no Spotify:', error.response ? error.response.data : error.message);
+    res.status(500).json({ error: 'Falha ao criar a playlist no Spotify.' });
   }
 })
 
