@@ -23,7 +23,7 @@ passport.use(
         {
             clientID: process.env.CLIENT_ID,
             clientSecret: process.env.CLIENT_SECRET,
-            callbackURL: 'https://localhost:3000/callback'
+            callbackURL: process.env.CALLBACK_URL || 'http://localhost:3000/callback'
         },
 
         function(accessToken, refreshToken, expires_in, profile, done) {
@@ -47,8 +47,8 @@ function ensureAuthenticated(req, res, next) {
     return next();
   }
 
-  if(req.headers['accept'] === 'application/json') {
-    return res.status(401).json({ error: 'Sessão expirada. Por favor, faça login novamente.'});
+  if (req.path.startsWith('/api/')) {
+    return res.status(401).json({ error: 'Sessão expirada. Por favor, faça login novamente.' });
   }
 
   res.redirect('/login');
