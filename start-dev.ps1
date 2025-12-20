@@ -1,5 +1,5 @@
 Write-Host "Iniciando ngrok em segundo plano..."
-Start-Process -WindowStyle Hidden ngrok http 3000
+Start-Process -WindowStyle Hidden ngrok -ArgumentList "http 3000"
 
 Write-Host "Aguardando ngrok inicializar..."
 Start-Sleep -Seconds 5
