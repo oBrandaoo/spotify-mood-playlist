@@ -1,6 +1,6 @@
 async function generatePlaylist(mood) {
     const resultDiv = document.getElementById('playlist-result');
-    resultDiv.innerHTML = '<p>Criando playlist no spotify... (pode demorar um pouco)</p>';
+    resultDiv.innerHTML = '<p class="loading-text">Criando playlist no spotify...</p>';
 
     try {
       const response = await fetch(`/api/generate-playlist?mood=${encodeURIComponent(mood)}`);
@@ -16,22 +16,33 @@ async function generatePlaylist(mood) {
 
       const data = await response.json();
 
-      resultDiv.innerHTML = '';
-
       if (data.success) {
         resultDiv.innerHTML = `
-          <h3>✅ Sucesso!</h3>
-          <p>${data.message}</p>
-          <a href="${data.playlistUrl}" target="_blank">
-            <button>Abrir Playlist no Spotify</button>
-          </a>
+          <div class="bg-green-900 border border-green-700 text-green-100 px-4 py-3 rounded-lg">
+            <p class="font-bold">✅ Sucesso!</p>
+            <p>${data.message}</p>
+            <a href="${data.playlistUrl}" target="_blank" class="inline-block mt-3 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition-colors">
+                Abrir Playlist no Spotify
+            </a>
+          </div>
         `;
       } else {
-        resultDiv.innerHTML = `<p>❌ ${data.error}</p>`;
+        resultDiv.innerHTML = `
+          <div class="bg-red-900 border border-red-700 text-red-100 px-4 py-3 rounded-lg">
+            <p class="font-bold">❌ Ops!</p>
+            <p>${data.error}</p>
+          </div>
+        `;
       }
+
     } catch (error) {
       console.error('Erro:', error);
-      resultDiv.innerHTML = '<p>Ocorreu um erro ao gerar a playlist. Tente novamente.</p>';
+      resultDiv.innerHTML = `
+        <div class="bg-red-900 border border-red-700 text-red-100 px-4 py-3 rounded-lg">
+          <p class="font-bold">❌ Erro de Conexão</p>
+          <p>Ocorreu um erro ao gerar a playlist. Tente novamente.</p>
+        </div>
+      `;
     }
   }
 
