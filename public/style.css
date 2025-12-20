@@ -1,10 +1,20 @@
+.mood-card {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.mood-card:hover {
+  transform: translateY(-8px);
+}
+
+.mood-card .emoji {
+  font-size: 3rem;
+  line-height: 1;
+}
+
 @keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
 }
 
 .loading-text {

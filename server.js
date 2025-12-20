@@ -1,10 +1,12 @@
 require('dotenv').config();
+const fs = require('fs');
 const axios = require('axios');
 const express = require('express');
 const path = require('path');
 const passport = require('passport')
 const SpotifyStrategy = require('passport-spotify').Strategy;
 const expressSession = require('express-session');
+const moods = require('./moods');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -74,7 +76,12 @@ app.get('/logout', (req, res, next) => {
 });
 
 app.get('/', ensureAuthenticated, (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  const timestamp = Date.now();
+  let html = fs.readFileSync(path.join(__dirname, 'public', 'index.html'), 'utf8');
+  
+  html = html.replace('<script src="/script.js"></script>', `<script src="/script.js?t=${timestamp}"></script>`);
+  
+  res.send(html);
 });
 
 app.get('/api/user', ensureAuthenticated, (req, res) => {
@@ -82,7 +89,7 @@ app.get('/api/user', ensureAuthenticated, (req, res) => {
 });
 
 app.get('/api/generate-playlist', ensureAuthenticated, async (req, res) => {
-  const mood = req.query.mood;
+  const moodId = req.query.moodId;
   const accessToken = req.user.accessToken;
   const userId = req.user.id;
 
@@ -90,13 +97,13 @@ app.get('/api/generate-playlist', ensureAuthenticated, async (req, res) => {
     return res.status(401).json({ error: 'Usuário não autenticado.' });
   }
 
-  const searchQueries = {
-    'Triste para Animar': 'genre:pop upbeat happy',
-    'Concentração': 'genre:ambient chill focus instrumental',
-    'Festa': 'genre:dance party energetic'
-  };
+  const selectedMood = moods.find(m => m.id === moodId);
 
-  const query = searchQueries[mood] || 'happy';
+  if (!selectedMood) {
+    return res.status(400).json({ error: 'Humor inválido.' });
+  }
+
+  const query = selectedMood.searchQuery;
 
   try {
     const searchResponse = await axios.get('https://api.spotify.com/v1/search', {
@@ -112,8 +119,8 @@ app.get('/api/generate-playlist', ensureAuthenticated, async (req, res) => {
 
     const createPlaylistResponse = await axios.post(`https://api.spotify.com/v1/users/${userId}/playlists`, 
       {
-        name: `Playlist ${mood} - Gerada por App`,
-        description: `Uma playlist para o humor "${mood}", criada automaticamente.`,
+        name: `Playlist ${selectedMood.name} - Gerada por App`,
+        description: selectedMood.description,
         public: false
       },
       {
@@ -142,6 +149,10 @@ app.get('/api/generate-playlist', ensureAuthenticated, async (req, res) => {
     console.error('Erro ao criar playlist no Spotify:', error.response ? error.response.data : error.message);
     res.status(500).json({ error: 'Falha ao criar a playlist no Spotify.' });
   }
+})
+
+app.get('/api/moods', (req, res) => {
+  res.json(moods);
 })
 
 app.listen(PORT, () => {

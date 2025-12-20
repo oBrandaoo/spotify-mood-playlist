@@ -4,42 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gerador de Playlist por Humor</title>
-    
     <script src="https://cdn.tailwindcss.com"></script>
-
     <link rel="stylesheet" href="/style.css">
 </head>
 <body class="bg-gray-900 text-white min-h-screen flex items-center justify-center p-4">
 
-    <main class="w-full max-w-lg bg-gray-800 rounded-2xl shadow-2xl p-8 space-y-6">
+    <main class="w-full max-w-4xl bg-gray-800 rounded-2xl shadow-2xl p-8 space-y-8">
         
         <header class="text-center">
             <h1 class="text-4xl font-bold bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
-                Gerador de Playlist
+                Sua Trilha Sonora para Qualquer Momento
             </h1>
-            <p class="text-gray-400 mt-2">Deixe o Spotify criar a trilha sonora perfeita para o seu momento.</p>
+            <p class="text-gray-400 mt-2">Escolha um humor e deixe a IA criar a playlist perfeita para você.</p>
         </header>
 
         <div class="flex justify-end">
-            <button id="logout-btn" class="text-sm text-gray-400 hover:text-white transition-colors">
-                Sair
-            </button>
+            <button id="logout-btn" class="text-sm text-gray-400 hover:text-white transition-colors">Sair</button>
         </div>
 
-        <section class="space-y-6">
-            <h2 class="text-xl font-semibold text-center">Como você está se sentindo?</h2>
-            
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <button onclick="generatePlaylist('Triste para Animar')" class="mood-btn bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105">
-                    😢 Para Animar
-                </button>
-                <button onclick="generatePlaylist('Concentração')" class="mood-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105">
-                    🧘 Para Concentrar
-                </button>
-                <button onclick="generatePlaylist('Festa')" class="mood-btn bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105">
-                    🎉 Para Festa
-                </button>
-            </div>
+        <section id="mood-cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         </section>
 
         <div id="playlist-result" class="text-center">
@@ -47,6 +30,7 @@
 
     </main>
 
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="/script.js"></script>
 </body>
 </html>
