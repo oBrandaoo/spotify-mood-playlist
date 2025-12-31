@@ -141,7 +141,6 @@ function toggleAllTracks() {
       toggleBtn.textContent = 'Desmarcar Todas';
     }
     
-    // Re-renderiza a lista para refletir o estado
     allTrackElements.forEach(el => {
       const trackUri = el.dataset.trackUri;
       const unselectedIcon = el.querySelector('.unselected-icon');
@@ -210,6 +209,48 @@ async function createFinalPlaylist() {
   }
 }
 
+async function generateWithAI(prompt) {
+    const resultDiv = document.getElementById('playlist-result');
+    const selectionSection = document.getElementById('track-selection');
+    
+    resultDiv.innerHTML = `<p class="loading-text">Pensando em uma playlist perfeita para você...</p>`;
+    selectionSection.classList.add('hidden');
+    selectedTracks.clear();
+
+    try {
+      const response = await fetch('/api/generate-search-query', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userPrompt: prompt })
+      });
+
+      if (!response.ok) {
+          throw new Error('Falha ao gerar a busca.');
+      }
+
+      const { searchQuery } = await response.json();
+
+      resultDiv.innerHTML = `<p class="loading-text">Buscando músicas para "${prompt}"...</p>`;
+      const tracksResponse = await fetch(`/api/search-tracks?moodId=ai&query=${encodeURIComponent(searchQuery)}`);
+
+      if (!tracksResponse.ok) throw new Error('Falha ao buscar músicas.');
+      const tracks = await tracksResponse.json();
+      
+      resultDiv.innerHTML = '';
+      if (tracks.length === 0) {
+        resultDiv.innerHTML = `<p class="text-gray-400">Nenhuma música encontrada para este momento.</p>`;
+        return;
+      }
+
+      renderTrackList(tracks);
+      selectionSection.classList.remove('hidden');
+
+    } catch (error) {
+      console.error('Erro:', error);
+      resultDiv.innerHTML = `<p class="text-red-400">Ocorreu um erro. Tente novamente.</p>`;
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const logoutBtn = document.getElementById('logout-btn');
   if (logoutBtn) {
@@ -221,4 +262,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('toggle-all-btn').addEventListener('click', toggleAllTracks);
   document.getElementById('create-final-playlist-btn').addEventListener('click', createFinalPlaylist);
+  const aiPromptInput = document.getElementById('ai-prompt-input');
+  const generateAiBtn = document.getElementById('generate-ai-btn');
+
+  if (generateAiBtn) {
+    generateAiBtn.addEventListener('click', async () => {
+      const prompt = aiPromptInput.value.trim();
+      if (!prompt) {
+        alert('Por favor, descreva seu momento.');
+        return;
+      }
+      await generateWithAI(prompt);
+    });
+
+    aiPromptInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        generateAiBtn.click();
+      }
+    });
+  }
 });

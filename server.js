@@ -7,6 +7,11 @@ const passport = require('passport')
 const SpotifyStrategy = require('passport-spotify').Strategy;
 const expressSession = require('express-session');
 const moods = require('./moods');
+const OpenAI = require('openai');
+
+const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+});
 
 const app = express();
 app.use(express.json());
@@ -91,18 +96,24 @@ app.get('/api/user', ensureAuthenticated, (req, res) => {
 });
 
 app.get('/api/search-tracks', ensureAuthenticated, async (req, res) => {
-  const moodId = req.query.moodId;
+  const { moodId, query } = req.query;
   const accessToken = req.user.accessToken;
 
-  const selectedMood = moods.find(m => m.id === moodId);
-  if (!selectedMood) {
-    return res.status(400).json({ error: 'Humor inválido.' });
+  let searchQuery;
+  if (query) {
+    searchQuery = query;
+  } else {
+    const selectedMood = moods.find(m => m.id === moodId);
+    if (!selectedMood) {
+      return res.status(400).json({ error: 'Humor inválido.' });
+    }
+    searchQuery = selectedMood.searchQuery;
   }
 
   try {
     const searchResponse = await axios.get('https://api.spotify.com/v1/search', {
       headers: { 'Authorization': `Bearer ${accessToken}` },
-      params: { q: selectedMood.searchQuery, type: 'track', limit: 15 } // Buscamos mais músicas para dar opção
+      params: { q: searchQuery, type: 'track', limit: 15 }
     });
     
     res.json(searchResponse.data.tracks.items);
@@ -152,7 +163,45 @@ app.post('/api/create-playlist', ensureAuthenticated, async (req, res) => {
 
 app.get('/api/moods', (req, res) => {
   res.json(moods);
-})
+});
+
+app.post('/api/generate-search-query', ensureAuthenticated, async (req, res) => {
+    const { userPrompt } = req.body;
+
+    if (!userPrompt) {
+        return res.status(400).json({ error: 'O prompt do usuário não pode estar vazio.' });
+    }
+
+    try {
+        const completion = await openai.chat.completions.create({
+            model: "gpt-3.5-turbo",
+            messages: [
+                {
+                    role: "system",
+                    content: "Você é um assistente especialista em música e na API de busca do Spotify. Sua tarefa é converter sentimentos, situações ou descrições de usuários em termos de busca eficazes para a API do Spotify. Retorne APENAS os termos de busca, sem explicações, aspas ou texto extra. Use uma combinação de gêneros musicais, adjetivos (em inglês) e palavras-chave. Exemplos: 'genre:lo-fi chill study', 'genre:rock energetic driving', 'genre:pop upbeat happy workout'."
+                },
+                {
+                    role: "user",
+                    content: userPrompt
+                }
+            ],
+            max_tokens: 50,
+            temperature: 0.7,
+        });
+
+        const searchQuery = completion.choices[0].message.content.trim();
+        
+        if (!searchQuery) {
+            return res.status(500).json({ error: 'A IA não conseguiu gerar uma busca.' });
+        }
+
+        res.json({ searchQuery });
+
+    } catch (error) {
+        console.error('Erro ao chamar a API da OpenAI:', error);
+        res.status(500).json({ error: 'Falha ao gerar a busca com IA.' });
+    }
+});
 
 app.listen(PORT, () => {
     console.log(`Servidor rodando em http://localhost:${PORT}`);
