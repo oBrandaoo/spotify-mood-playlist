@@ -2,7 +2,7 @@ let selectedTracks = new Set();
 
 async function loadMoods() {
   const container = document.getElementById('mood-cards-container');
-  container.innerHTML = '<p class="loading-text">Carregando humores...</p>';
+  renderMoodSkeletons();
 
   try {
     const response = await fetch('/api/moods');
@@ -13,7 +13,7 @@ async function loadMoods() {
 
   } catch (error) {
     console.error(error);
-    container.innerHTML = '<p class="text-red-400">Não foi possível carregar os humores.</p>';
+    showToast('Não foi possível carregar os humores.', 'error');
   }
 }
 
@@ -62,11 +62,12 @@ async function searchAndDisplayTracks(moodId, moodName) {
       return;
     }
 
+    renderTrackSkeletons();
+
     const response = await fetch(`/api/search-tracks?moodId=${encodeURIComponent(moodId)}`);
     if (!response.ok) throw new Error('Falha ao buscar músicas.');
     
     const tracks = await response.json();
-    resultDiv.innerHTML = '';
     
     if (tracks.length === 0) {
       resultDiv.innerHTML = `<p class="text-gray-400">Nenhuma música encontrada para este humor.</p>`;
@@ -186,15 +187,7 @@ async function createFinalPlaylist() {
 
     const data = await response.json();
     if (data.success) {
-      resultDiv.innerHTML = `
-        <div class="bg-green-900 border border-green-700 text-green-100 px-4 py-3 rounded-lg">
-          <p class="font-bold">✅ Sucesso!</p>
-          <p>${data.message}</p>
-          <a href="${data.playlistUrl}" target="_blank" class="inline-block mt-3 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition-colors">
-            Abrir Playlist no Spotify
-          </a>
-        </div>
-      `;
+      showToast(data.message, 'success', data.playlistUrl);
       confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 } });
       document.getElementById('track-selection').classList.add('hidden');
     } else {
@@ -202,7 +195,7 @@ async function createFinalPlaylist() {
     }
   } catch (error) {
     console.error('Erro:', error);
-    resultDiv.innerHTML = `<p class="text-red-400">Ocorreu um erro ao criar a playlist. Tente novamente.</p>`;
+    showToast('Ocorreu um erro ao criar a playlist. Tente novamente.', 'error');
   } finally {
     btn.disabled = false;
     btn.textContent = originalText;
@@ -249,6 +242,55 @@ async function generateWithAI(prompt) {
       console.error('Erro:', error);
       resultDiv.innerHTML = `<p class="text-red-400">Ocorreu um erro. Tente novamente.</p>`;
     }
+}
+
+function renderMoodSkeletons() {
+    const container = document.getElementById('mood-cards-container');
+    container.innerHTML = '';
+    for (let i = 0; i < 6; i++) {
+        const skeleton = document.createElement('div');
+        skeleton.className = 'skeleton skeleton-card';
+        container.appendChild(skeleton);
+    }
+}
+
+function renderTrackSkeletons() {
+    const trackListDiv = document.getElementById('track-list');
+    trackListDiv.innerHTML = '';
+    for (let i = 0; i < 10; i++) {
+        const skeleton = document.createElement('div');
+        skeleton.className = 'skeleton skeleton-track flex items-center space-x-4 p-3 rounded-lg';
+        trackListDiv.appendChild(skeleton);
+    }
+}
+
+function showToast(message, type = 'info', url = null) {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+
+    if (url) {
+        toast.style.cursor = 'pointer';
+        toast.addEventListener('click', () => {
+            window.open(url, '_blank');
+        });
+    }
+    
+    container.appendChild(toast);
+
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            toast.classList.add('show');
+        });
+    });
+
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+            container.removeChild(toast);
+        }, 300);
+    }, 4000);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
