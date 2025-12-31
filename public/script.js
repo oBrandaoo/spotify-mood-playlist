@@ -50,7 +50,7 @@ async function generatePlaylist(moodId, moodName) {
   resultDiv.innerHTML = `<p class="loading-text">Criando a playlist "${moodName}"</p>`;
 
   try {
-    const response = await fetch(`/api/generate-playlist?mood=${encodeURIComponent(moodId)}`);
+    const response = await fetch(`/api/generate-playlist?moodId=${encodeURIComponent(moodId)}`);
 
     if (response.status === 401) {
       window.location.href = '/login';
