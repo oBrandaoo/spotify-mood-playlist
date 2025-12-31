@@ -4,7 +4,7 @@ const moods = [
     name: 'Para Animar',
     emoji: '😄',
     description: 'Para transformar o dia em algo melhor.',
-    searchQuery: 'genre:pop upbeat happy',
+    searchQuery: 'upbeat happy pop hits feel-good',
     color: 'yellow'
   },
   {
@@ -12,7 +12,7 @@ const moods = [
     name: 'Concentração',
     emoji: '🧘',
     description: 'Sons para focar profundo e produtivo.',
-    searchQuery: 'genre:ambient chill focus instrumental',
+    searchQuery: 'focus study beats lo-fi chill instrumental',
     color: 'blue'
   },
   {
@@ -20,7 +20,7 @@ const moods = [
     name: 'Festa',
     emoji: '🎉',
     description: 'A trilha sonora perfeita para curtir.',
-    searchQuery: 'genre:dance party energetic',
+    searchQuery: 'party dance hits energetic',
     color: 'pink'
   },
   {
@@ -28,7 +28,7 @@ const moods = [
     name: 'Relaxar',
     emoji: '😌',
     description: 'Para desacelerar e encontrar a paz.',
-    searchQuery: 'genre:chill lo-fi downtempo',
+    searchQuery: 'chill relax acoustic soft',
     color: 'green'
   },
   {
@@ -36,7 +36,7 @@ const moods = [
     name: 'Treino',
     emoji: '💪',
     description: 'Energia para dar o máximo no exercício.',
-    searchQuery: 'genre:rock electronic workout',
+    searchQuery: 'workout gym cardio high energy',
     color: 'red'
   },
   {
@@ -44,7 +44,7 @@ const moods = [
     name: 'Nostalgia',
     emoji: '📻',
     description: 'Uma viagem no tempo para as melhores memórias.',
-    searchQuery: 'genre:80s 90s classics',
+    searchQuery: '80s 90s classics hits',
     color: 'purple'
   }
 ];

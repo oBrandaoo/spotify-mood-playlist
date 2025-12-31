@@ -178,7 +178,7 @@ app.post('/api/generate-search-query', ensureAuthenticated, async (req, res) => 
             messages: [
                 {
                     role: "system",
-                    content: "Você é um assistente especialista em música e na API de busca do Spotify. Sua tarefa é converter sentimentos, situações ou descrições de usuários em termos de busca eficazes para a API do Spotify. Retorne APENAS os termos de busca, sem explicações, aspas ou texto extra. Use uma combinação de gêneros musicais, adjetivos (em inglês) e palavras-chave. Exemplos: 'genre:lo-fi chill study', 'genre:rock energetic driving', 'genre:pop upbeat happy workout'."
+                    content: "Você é um assistente especialista em música e na API de busca do Spotify. Sua tarefa é converter sentimentos ou situações em termos de busca eficazes. Retorne APENAS os termos de busca, sem explicações ou aspas. Use uma combinação de palavras-chave que descrevam a vibe, a energia e o contexto, em vez de depender apenas de gêneros. Use termos como 'hits', 'beats', 'chill', 'energy', 'study'. Exemplos: 'upbeat happy pop hits', 'focus study beats lo-fi', 'party dance energetic tag:new'."
                 },
                 {
                     role: "user",

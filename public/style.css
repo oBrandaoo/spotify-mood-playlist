@@ -62,7 +62,7 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   display: flex;
   align-items: center;
-  space-x: 12px;
+  appearance: 12px;
   opacity: 0;
   transform: translateX(100%);
   transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
