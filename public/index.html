@@ -25,8 +25,26 @@
         <section id="mood-cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         </section>
 
-        <div id="playlist-result" class="text-center">
-        </div>
+        <section id="playlist-result" class="text-center space-y-4">
+        </section>
+
+        <section id="track-selection" class="hidden space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="text-2xl font-semibold">Selecione as Músicas</h3>
+                <button id="toggle-all-btn" class="text-sm bg-gray-600 hover:bg-gray-700 px-3 py-1 rounded transition-colors">
+                    Selecionar Todas
+                </button>
+            </div>
+            
+            <div id="track-list" class="space-y-2 max-h-96 overflow-y-auto pr-2">
+            </div>
+
+            <div class="flex justify-center">
+                <button id="create-final-playlist-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg text-lg transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    Criar Playlist com 0 músicas
+                </button>
+            </div>
+        </section>
 
     </main>
 
