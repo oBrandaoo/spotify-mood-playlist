@@ -64,6 +64,22 @@
             </div>
         </section>
 
+        <div class="flex justify-between items-center">
+            <button id="my-history-btn" class="text-sm bg-gray-600 hover:bg-gray-700 px-3 py-1 rounded transition-colors">
+                Meu Histórico
+            </button>
+            <button id="logout-btn" class="text-sm text-gray-400 hover:text-white transition-colors">Sair</button>
+        </div>
+
+        <section id="history-section" class="hidden space-y-4">
+            <h3 class="text-2xl font-semibold">Suas Playlists Anteriores</h3>
+            <div id="history-list" class="space-y-3 max-h-96 overflow-y-auto pr-2">
+            </div>
+            <button id="close-history-btn" class="text-sm text-gray-400 hover:text-white">
+                Voltar
+            </button>
+        </section>
+
     </main>
 
     <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div>

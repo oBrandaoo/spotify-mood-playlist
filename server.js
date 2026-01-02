@@ -5,13 +5,20 @@ const express = require('express');
 const path = require('path');
 const passport = require('passport')
 const SpotifyStrategy = require('passport-spotify').Strategy;
+const { createClient } = require('@supabase/supabase-js');
 const expressSession = require('express-session');
-const moods = require('./moods');
 const OpenAI = require('openai');
+
+const moods = require('./moods');
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
+
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_ANON_KEY
+);
 
 const app = express();
 app.use(express.json());
@@ -155,9 +162,45 @@ app.post('/api/create-playlist', ensureAuthenticated, async (req, res) => {
       playlistUrl: newPlaylist.external_urls.spotify
     });
 
+    try {
+      const { error } = await supabase
+        .from('playlists')
+        .insert({
+          user_id: userId,
+          name: newPlaylist.name,
+          url: newPlaylist.external_urls.spotify
+        });
+
+      if (error) {
+        console.error('Erro ao salvar no Supabase:', error);
+      }
+    } catch (supabaseError) {
+      console.error('Erro inesperado ao salvar no Supabase:', supabaseError);
+    }
+
   } catch (error) {
     console.error('Erro ao criar playlist:', error.response ? error.response.data : error.message);
     res.status(500).json({ error: 'Falha ao criar a playlist.' });
+  }
+});
+
+app.get('/api/my-playlists', ensureAuthenticated, async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    const { data, error } = await supabase
+      .from('playlists')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    res.json(data);
+
+  } catch (error) {
+    console.error('Erro ao buscar playlists:', error);
+    res.status(500).json({ error: 'Falha ao buscar o histórico.' });
   }
 });
 
