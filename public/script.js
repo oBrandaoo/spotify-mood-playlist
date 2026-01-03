@@ -293,6 +293,56 @@ function showToast(message, type = 'info', url = null) {
     }, 4000);
 }
 
+async function showHistory() {
+    const historySection = document.getElementById('history-section');
+    const historyList = document.getElementById('history-list');
+    const moodCards = document.getElementById('mood-cards-container');
+    const aiSection = document.querySelector('section.bg-gray-700');
+
+    historyList.innerHTML = '<p class="loading-text">Carregando seu histórico...</p>';
+    historySection.classList.remove('hidden');
+    moodCards.classList.add('hidden');
+    if(aiSection) aiSection.classList.add('hidden');
+
+    try {
+        const response = await fetch('/api/my-playlists');
+        if (!response.ok) throw new Error('Falha ao carregar histórico.');
+        
+        const playlists = await response.json();
+        historyList.innerHTML = '';
+
+        if (playlists.length === 0) {
+            historyList.innerHTML = '<p class="text-gray-400">Você ainda não criou nenhuma playlist.</p>';
+            return;
+        }
+
+        playlists.forEach(playlist => {
+            const item = document.createElement('div');
+            item.className = 'flex justify-between items-center p-3 bg-gray-700 rounded-lg';
+            item.innerHTML = `
+                <div>
+                    <p class="font-semibold">${playlist.name}</p>
+                    <p class="text-xs text-gray-400">${new Date(playlist.created_at).toLocaleString()}</p>
+                </div>
+                <a href="${playlist.url}" target="_blank" class="bg-green-600 hover:bg-green-700 text-white text-sm font-bold py-1 px-3 rounded transition-colors">
+                    Abrir
+                </a>
+            `;
+            historyList.appendChild(item);
+        });
+
+    } catch (error) {
+        console.error(error);
+        historyList.innerHTML = '<p class="text-red-400">Não foi possível carregar o histórico.</p>';
+    }
+}
+
+function hideHistory() {
+    document.getElementById('history-section').classList.add('hidden');
+    document.getElementById('mood-cards-container').classList.remove('hidden');
+    document.querySelector('section.bg-gray-700').classList.remove('hidden');
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const logoutBtn = document.getElementById('logout-btn');
   if (logoutBtn) {
@@ -304,6 +354,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('toggle-all-btn').addEventListener('click', toggleAllTracks);
   document.getElementById('create-final-playlist-btn').addEventListener('click', createFinalPlaylist);
+  document.getElementById('my-history-btn').addEventListener('click', showHistory);
+  document.getElementById('close-history-btn').addEventListener('click', hideHistory);
   const aiPromptInput = document.getElementById('ai-prompt-input');
   const generateAiBtn = document.getElementById('generate-ai-btn');
 
