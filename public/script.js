@@ -293,54 +293,62 @@ function showToast(message, type = 'info', url = null) {
     }, 4000);
 }
 
-async function showHistory() {
+function showHistory() {
     const historySection = document.getElementById('history-section');
-    const historyList = document.getElementById('history-list');
-    const moodCards = document.getElementById('mood-cards-container');
-    const aiSection = document.querySelector('section.bg-gray-700');
+    const mainContent = document.getElementById('main-content');
+    
+    document.getElementById('playlist-result').innerHTML = '';
+    document.getElementById('track-selection').classList.add('hidden');
 
-    historyList.innerHTML = '<p class="loading-text">Carregando seu histórico...</p>';
     historySection.classList.remove('hidden');
-    moodCards.classList.add('hidden');
-    if(aiSection) aiSection.classList.add('hidden');
+    mainContent.classList.add('hidden');
 
-    try {
-        const response = await fetch('/api/my-playlists');
-        if (!response.ok) throw new Error('Falha ao carregar histórico.');
-        
-        const playlists = await response.json();
-        historyList.innerHTML = '';
-
-        if (playlists.length === 0) {
-            historyList.innerHTML = '<p class="text-gray-400">Você ainda não criou nenhuma playlist.</p>';
-            return;
-        }
-
-        playlists.forEach(playlist => {
-            const item = document.createElement('div');
-            item.className = 'flex justify-between items-center p-3 bg-gray-700 rounded-lg';
-            item.innerHTML = `
-                <div>
-                    <p class="font-semibold">${playlist.name}</p>
-                    <p class="text-xs text-gray-400">${new Date(playlist.created_at).toLocaleString()}</p>
-                </div>
-                <a href="${playlist.url}" target="_blank" class="bg-green-600 hover:bg-green-700 text-white text-sm font-bold py-1 px-3 rounded transition-colors">
-                    Abrir
-                </a>
-            `;
-            historyList.appendChild(item);
-        });
-
-    } catch (error) {
-        console.error(error);
-        historyList.innerHTML = '<p class="text-red-400">Não foi possível carregar o histórico.</p>';
-    }
+    loadHistoryData();
 }
 
 function hideHistory() {
-    document.getElementById('history-section').classList.add('hidden');
-    document.getElementById('mood-cards-container').classList.remove('hidden');
-    document.querySelector('section.bg-gray-700').classList.remove('hidden');
+    const historySection = document.getElementById('history-section');
+    const mainContent = document.getElementById('main-content');
+
+    historySection.classList.add('hidden');
+    mainContent.classList.remove('hidden');
+}
+
+async function loadHistoryData() {
+    const historyList = document.getElementById('history-list');
+    historyList.innerHTML = '<p class="loading-text">Carregando seu histórico...</p>';
+
+    try {
+      const response = await fetch('/api/my-playlists');
+      if (!response.ok) throw new Error('Falha ao carregar histórico.');
+      
+      const playlists = await response.json();
+      historyList.innerHTML = '';
+
+      if (playlists.length === 0) {
+        historyList.innerHTML = '<p class="text-gray-400">Você ainda não criou nenhuma playlist.</p>';
+        return;
+      }
+
+      playlists.forEach(playlist => {
+        const item = document.createElement('div');
+        item.className = 'flex justify-between items-center p-3 bg-gray-700 rounded-lg';
+        item.innerHTML = `
+            <div>
+                <p class="font-semibold">${playlist.name}</p>
+                <p class="text-xs text-gray-400">${new Date(playlist.created_at).toLocaleString()}</p>
+            </div>
+            <a href="${playlist.url}" target="_blank" class="bg-green-600 hover:bg-green-700 text-white text-sm font-bold py-1 px-3 rounded transition-colors">
+                Abrir
+            </a>
+        `;
+        historyList.appendChild(item);
+      });
+
+    } catch (error) {
+      console.error(error);
+      historyList.innerHTML = '<p class="text-red-400">Não foi possível carregar o histórico.</p>';
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {

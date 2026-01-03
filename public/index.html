@@ -18,58 +18,56 @@
             <p class="text-gray-400 mt-2">Escolha um humor ou descreva seu momento para criar a playlist perfeita.</p>
         </header>
 
-        <div class="flex justify-end">
-            <button id="logout-btn" class="text-sm text-gray-400 hover:text-white transition-colors">Sair</button>
-        </div>
-
-        <section id="mood-cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        </section>
-
-        <section class="bg-gray-700 rounded-xl p-6 space-y-4">
-            <h2 class="text-xl font-semibold text-center">Ou descreva seu momento:</h2>
-            <div class="flex space-x-2">
-                <input 
-                    type="text" 
-                    id="ai-prompt-input" 
-                    placeholder="Ex: Estudando para uma prova..."
-                    class="flex-1 w-full px-4 py-2 bg-gray-600 border border-gray-500 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                <button 
-                    id="generate-ai-btn" 
-                    class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-colors"
-                >
-                    Gerar
-                </button>
-            </div>
-        </section>
-
-        <section id="playlist-result" class="text-center space-y-4">
-        </section>
-
-        <section id="track-selection" class="hidden space-y-4">
-            <div class="flex justify-between items-center">
-                <h3 class="text-2xl font-semibold">Selecione as Músicas</h3>
-                <button id="toggle-all-btn" class="text-sm bg-gray-600 hover:bg-gray-700 px-3 py-1 rounded transition-colors">
-                    Selecionar Todas
-                </button>
-            </div>
-            
-            <div id="track-list" class="space-y-2 max-h-96 overflow-y-auto pr-2">
-            </div>
-
-            <div class="flex justify-center">
-                <button id="create-final-playlist-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg text-lg transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                    Criar Playlist com 0 músicas
-                </button>
-            </div>
-        </section>
-
         <div class="flex justify-between items-center">
             <button id="my-history-btn" class="text-sm bg-gray-600 hover:bg-gray-700 px-3 py-1 rounded transition-colors">
                 Meu Histórico
             </button>
             <button id="logout-btn" class="text-sm text-gray-400 hover:text-white transition-colors">Sair</button>
         </div>
+
+        <section id="main-content" class="space-y-8">
+            <section id="mood-cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            </section>
+
+            <section class="bg-gray-700 rounded-xl p-6 space-y-4">
+                <h2 class="text-xl font-semibold text-center">Ou descreva seu momento:</h2>
+                <div class="flex space-x-2">
+                    <input 
+                        type="text" 
+                        id="ai-prompt-input" 
+                        placeholder="Ex: Estudando para uma prova..."
+                        class="flex-1 w-full px-4 py-2 bg-gray-600 border border-gray-500 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                    <button 
+                        id="generate-ai-btn" 
+                        class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-colors"
+                    >
+                        Gerar
+                    </button>
+                </div>
+            </section>
+        
+            <section id="playlist-result" class="text-center space-y-4">
+            </section>
+
+            <section id="track-selection" class="hidden space-y-4">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-2xl font-semibold">Selecione as Músicas</h3>
+                    <button id="toggle-all-btn" class="text-sm bg-gray-600 hover:bg-gray-700 px-3 py-1 rounded transition-colors">
+                        Selecionar Todas
+                    </button>
+                </div>
+                
+                <div id="track-list" class="space-y-2 max-h-96 overflow-y-auto pr-2">
+                </div>
+
+                <div class="flex justify-center">
+                    <button id="create-final-playlist-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg text-lg transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                        Criar Playlist com 0 músicas
+                    </button>
+                </div>
+            </section>
+        </section>
 
         <section id="history-section" class="hidden space-y-4">
             <h3 class="text-2xl font-semibold">Suas Playlists Anteriores</h3>
