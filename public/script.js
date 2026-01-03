@@ -212,6 +212,12 @@ async function generateWithAI(prompt) {
     selectedTracks.clear();
 
     try {
+      const sessionCheck = await fetch('/api/user');
+      if (!sessionCheck.ok) {
+        window.location.href = '/login';
+        return;
+      }
+
       const response = await fetch('/api/generate-search-query', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -219,7 +225,7 @@ async function generateWithAI(prompt) {
       });
 
       if (!response.ok) {
-          throw new Error('Falha ao gerar a busca.');
+        throw new Error('Falha ao gerar a busca.');
       }
 
       const { searchQuery } = await response.json();
@@ -294,9 +300,15 @@ function showToast(message, type = 'info', url = null) {
     }, 4000);
 }
 
-function showHistory() {
+async function showHistory() {
     const historySection = document.getElementById('history-section');
     const mainContent = document.getElementById('main-content');
+
+    const sessionCheck = await fetch('/api/user');
+    if (!sessionCheck.ok) {
+      window.location.href = '/login';
+      return;
+    }
     
     document.getElementById('playlist-result').innerHTML = '';
     document.getElementById('track-selection').classList.add('hidden');
