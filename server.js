@@ -162,14 +162,16 @@ app.post('/api/create-playlist', ensureAuthenticated, async (req, res) => {
       playlistUrl: newPlaylist.external_urls.spotify
     });
 
+    const dataToSave = {
+      user_id: userId,
+      name: newPlaylist.name,
+      url: newPlaylist.external_urls.spotify
+    };
+
     try {
       const { error } = await supabase
         .from('playlists')
-        .insert({
-          user_id: userId,
-          name: newPlaylist.name,
-          url: newPlaylist.external_urls.spotify
-        });
+        .insert(dataToSave)
 
       if (error) {
         console.error('Erro ao salvar no Supabase:', error);
