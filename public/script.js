@@ -119,12 +119,12 @@ function toggleTrackSelection(trackUri) {
       selectedTracks.delete(trackUri);
       unselectedIcon.classList.remove('hidden');
       selectedIcon.classList.add('hidden');
-      trackElement.classList.remove('ring-2', 'ring-green-400');
+      trackElement.classList.remove('outline-2', 'outline-green-400', 'ring-offset-2', 'ring-offset-gray-800');
     } else {
       selectedTracks.add(trackUri);
       unselectedIcon.classList.add('hidden');
       selectedIcon.classList.remove('hidden');
-      trackElement.classList.add('ring-2', 'ring-green-400');
+      trackElement.classList.add('outline-2', 'outline-green-400', 'ring-offset-2', 'ring-offset-gray-800');
     }
     updateCreateButton();
 }
@@ -146,14 +146,15 @@ function toggleAllTracks() {
       const trackUri = el.dataset.trackUri;
       const unselectedIcon = el.querySelector('.unselected-icon');
       const selectedIcon = el.querySelector('.selected-icon');
+
       if (selectedTracks.has(trackUri)) {
           unselectedIcon.classList.add('hidden');
           selectedIcon.classList.remove('hidden');
-          el.classList.add('ring-2', 'ring-green-400');
+          el.classList.add('outline-2', 'outline-green-400', 'ring-offset-2', 'ring-offset-gray-800');
       } else {
           unselectedIcon.classList.remove('hidden');
           selectedIcon.classList.add('hidden');
-          el.classList.remove('ring-2', 'ring-green-400');
+          el.classList.remove('outline-2', 'outline-green-400', 'ring-offset-2', 'ring-offset-gray-800');
       }
     });
 
