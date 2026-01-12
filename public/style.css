@@ -206,3 +206,54 @@
   background: #1db954;
   color: black;
 }
+
+.spotify-track {
+  background: #181818;
+  border-radius: 12px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.spotify-track:hover {
+  background: #242424;
+}
+
+.track-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.track-left img {
+  width: 48px;
+  height: 48px;
+  border-radius: 6px;
+}
+
+.track-title {
+  font-weight: 600;
+}
+
+.track-artist {
+  font-size: 0.85rem;
+  color: #b3b3b3;
+}
+
+.track-right {
+  font-size: 1.2rem;
+  color: #1db954;
+}
+
+.track-selected {
+  color: #1db954;
+}
+
+.spotify-track.ring {
+  outline: 2px solid #1db954;
+  outline-offset: -2px;
+}

@@ -123,75 +123,87 @@ function renderTrackList(tracks) {
   tracks.forEach(track => {
     const trackUri = track.uri;
     const trackElement = document.createElement('div');
-    trackElement.className = 'flex items-center space-x-4 p-3 bg-gray-700 rounded-lg cursor-pointer hover:bg-gray-600 transition-colors';
+
+    trackElement.className =
+      'spotify-track';
     trackElement.dataset.trackUri = trackUri;
-    
+
     trackElement.innerHTML = `
-      <img src="${track.album.images[2]?.url || 'https://via.placeholder.com/64'}" alt="Capa do Álbum" class="w-12 h-12 rounded">
-      <div class="flex-1">
-        <p class="font-semibold">${track.name}</p>
-        <p class="text-sm text-gray-400">${track.artists.map(a => a.name).join(', ')}</p>
+      <div class="track-left">
+        <img 
+          src="${track.album.images[2]?.url || 'https://via.placeholder.com/64'}"
+          alt="Capa do Álbum"
+        />
+        <div>
+          <p class="track-title">${track.name}</p>
+          <p class="track-artist">${track.artists.map(a => a.name).join(', ')}</p>
+        </div>
       </div>
-      <div class="track-checkbox text-2xl">
-        <span class="unselected-icon">⭕</span>
-        <span class="selected-icon hidden text-green-400">✅</span>
+
+      <div class="track-right">
+        <span class="track-unselected">○</span>
+        <span class="track-selected hidden">✔</span>
       </div>
     `;
 
-    trackElement.addEventListener('click', () => toggleTrackSelection(trackUri));
+    trackElement.addEventListener('click', () =>
+      toggleTrackSelection(trackUri)
+    );
+
     trackListDiv.appendChild(trackElement);
   });
 }
 
 function toggleTrackSelection(trackUri) {
-    const trackElement = document.querySelector(`[data-track-uri="${trackUri}"]`);
-    const unselectedIcon = trackElement.querySelector('.unselected-icon');
-    const selectedIcon = trackElement.querySelector('.selected-icon');
+  const trackElement = document.querySelector(
+    `[data-track-uri="${trackUri}"]`
+  );
+  const unselectedIcon = trackElement.querySelector('.track-unselected');
+  const selectedIcon = trackElement.querySelector('.track-selected');
 
-    if (selectedTracks.has(trackUri)) {
-      selectedTracks.delete(trackUri);
-      unselectedIcon.classList.remove('hidden');
-      selectedIcon.classList.add('hidden');
-      trackElement.classList.remove('outline-2', 'outline-green-400', 'ring-offset-2', 'ring-offset-gray-800');
-    } else {
-      selectedTracks.add(trackUri);
-      unselectedIcon.classList.add('hidden');
-      selectedIcon.classList.remove('hidden');
-      trackElement.classList.add('outline-2', 'outline-green-400', 'ring-offset-2', 'ring-offset-gray-800');
-    }
-    updateCreateButton();
+  if (selectedTracks.has(trackUri)) {
+    selectedTracks.delete(trackUri);
+    unselectedIcon.classList.remove('hidden');
+    selectedIcon.classList.add('hidden');
+    trackElement.classList.remove('ring');
+  } else {
+    selectedTracks.add(trackUri);
+    unselectedIcon.classList.add('hidden');
+    selectedIcon.classList.remove('hidden');
+    trackElement.classList.add('ring');
+  }
+
+  updateCreateButton();
 }
 
 function toggleAllTracks() {
-    const allTrackElements = document.querySelectorAll('#track-list > div');
-    const allTrackUris = Array.from(allTrackElements).map(el => el.dataset.trackUri);
-    const toggleBtn = document.getElementById('toggle-all-btn');
+  const allTrackElements = document.querySelectorAll('#track-list > div');
+  const allUris = Array.from(allTrackElements).map(el => el.dataset.trackUri);
+  const toggleBtn = document.getElementById('toggle-all-btn');
 
-    if (selectedTracks.size === allTrackUris.length) {
-      selectedTracks.clear();
-      toggleBtn.textContent = 'Selecionar Todas';
+  const selectingAll = selectedTracks.size !== allUris.length;
+
+  selectedTracks = selectingAll ? new Set(allUris) : new Set();
+  toggleBtn.textContent = selectingAll
+    ? 'Desmarcar todas'
+    : 'Selecionar todas';
+
+  allTrackElements.forEach(el => {
+    const uri = el.dataset.trackUri;
+    const unselectedIcon = el.querySelector('.track-unselected');
+    const selectedIcon = el.querySelector('.track-selected');
+
+    if (selectedTracks.has(uri)) {
+      unselectedIcon.classList.add('hidden');
+      selectedIcon.classList.remove('hidden');
     } else {
-      selectedTracks = new Set(allTrackUris);
-      toggleBtn.textContent = 'Desmarcar Todas';
+      unselectedIcon.classList.remove('hidden');
+      selectedIcon.classList.add('hidden');
+      el.classList.remove('ring');
     }
-    
-    allTrackElements.forEach(el => {
-      const trackUri = el.dataset.trackUri;
-      const unselectedIcon = el.querySelector('.unselected-icon');
-      const selectedIcon = el.querySelector('.selected-icon');
+  });
 
-      if (selectedTracks.has(trackUri)) {
-          unselectedIcon.classList.add('hidden');
-          selectedIcon.classList.remove('hidden');
-          el.classList.add('outline-2', 'outline-green-400', 'ring-offset-2', 'ring-offset-gray-800');
-      } else {
-          unselectedIcon.classList.remove('hidden');
-          selectedIcon.classList.add('hidden');
-          el.classList.remove('outline-2', 'outline-green-400', 'ring-offset-2', 'ring-offset-gray-800');
-      }
-    });
-
-    updateCreateButton();
+  updateCreateButton();
 }
 
 function updateCreateButton() {
@@ -361,40 +373,48 @@ function hideHistory() {
 }
 
 async function loadHistoryData() {
-    const historyList = document.getElementById('history-list');
-    historyList.innerHTML = '<p class="loading-text">Carregando seu histórico...</p>';
+  const historyList = document.getElementById('history-list');
+  historyList.innerHTML = '<p class="loading-text">Carregando seu histórico...</p>';
 
-    try {
-      const response = await fetch('/api/my-playlists');
-      if (!response.ok) throw new Error('Falha ao carregar histórico.');
-      
-      const playlists = await response.json();
-      historyList.innerHTML = '';
+  try {
+    const response = await fetch('/api/my-playlists');
+    if (!response.ok) throw new Error('Falha ao carregar histórico.');
 
-      if (playlists.length === 0) {
-        historyList.innerHTML = '<p class="text-gray-400">Você ainda não criou nenhuma playlist.</p>';
-        return;
-      }
+    const playlists = await response.json();
+    historyList.innerHTML = '';
 
-      playlists.forEach(playlist => {
-        const item = document.createElement('div');
-        item.className = 'flex justify-between items-center p-3 bg-gray-700 rounded-lg';
-        item.innerHTML = `
-            <div>
-                <p class="font-semibold">${playlist.name}</p>
-                <p class="text-xs text-gray-400">${new Date(playlist.created_at).toLocaleString()}</p>
-            </div>
-            <a href="${playlist.url}" target="_blank" class="bg-green-600 hover:bg-green-700 text-white text-sm font-bold py-1 px-3 rounded transition-colors">
-                Abrir
-            </a>
-        `;
-        historyList.appendChild(item);
-      });
-
-    } catch (error) {
-      console.error(error);
-      historyList.innerHTML = '<p class="text-red-400">Não foi possível carregar o histórico.</p>';
+    if (playlists.length === 0) {
+      historyList.innerHTML =
+        '<p class="text-gray-400">Você ainda não criou nenhuma playlist.</p>';
+      return;
     }
+
+    playlists.forEach(playlist => {
+      const item = document.createElement('div');
+      item.className = 'history-card';
+
+      item.innerHTML = `
+        <div class="history-left">
+          <div class="history-icon">🎵</div>
+          <div>
+            <h4>${playlist.name}</h4>
+            <span>${new Date(playlist.created_at).toLocaleString()}</span>
+          </div>
+        </div>
+
+        <a href="${playlist.url}" target="_blank" class="history-btn">
+          Abrir
+        </a>
+      `;
+
+      historyList.appendChild(item);
+    });
+
+  } catch (error) {
+    console.error(error);
+    historyList.innerHTML =
+      '<p class="text-red-400">Não foi possível carregar o histórico.</p>';
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
