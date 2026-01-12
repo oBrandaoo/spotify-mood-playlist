@@ -18,7 +18,6 @@ try {
     Write-Host "URL de Callback encontrada: $callbackUrl"
     Write-Host "Iniciando o servidor Node.js com a URL dinâmica..."
 
-    # Define a variável de ambiente e inicia o servidor
     $env:CALLBACK_URL = $callbackUrl
     npm run dev
 

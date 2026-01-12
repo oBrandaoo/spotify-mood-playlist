@@ -6,10 +6,11 @@
     <title>Gerador de Playlist por Humor</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/style.css">
+    <link rel="icon" href="data:,">
 </head>
-<body class="bg-gray-900 text-white min-h-screen flex items-center justify-center p-4">
+<body class="min-h-screen bg-black text-white flex items-center justify-center p-4">
 
-    <main class="w-full max-w-4xl bg-gray-800 rounded-2xl shadow-2xl p-8 space-y-8">
+    <main class="w-full max-w-5xl bg-[#121212] rounded-2xl shadow-2xl p-8 space-y-8 border border-white/10">
         
         <header class="text-center">
             <h1 class="text-4xl font-bold bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
@@ -19,7 +20,7 @@
         </header>
 
         <div class="flex justify-between items-center">
-            <button id="my-history-btn" class="text-sm bg-gray-600 hover:bg-gray-700 px-3 py-1 rounded transition-colors">
+            <button id="my-history-btn" class="border border-white/10 px-4 py-2 rounded-full text-sm hover:bg-white/10 transition">
                 Meu Histórico
             </button>
             <button id="logout-btn" class="text-sm text-gray-400 hover:text-white transition-colors">Sair</button>
@@ -29,21 +30,21 @@
             <section id="mood-cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             </section>
 
-            <section class="bg-gray-700 rounded-xl p-6 space-y-4">
+            <section class="spotify-box space-y-4">
                 <h2 class="text-xl font-semibold text-center">Ou descreva seu momento:</h2>
                 <div class="flex space-x-2">
                     <input 
                         type="text" 
                         id="ai-prompt-input" 
                         placeholder="Ex: Estudando para uma prova..."
-                        class="flex-1 w-full px-4 py-2 bg-gray-600 border border-gray-500 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        class="flex-1 px-4 py-3 bg-black border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#1db954]"
                     >
-                    <button 
-                        id="generate-ai-btn" 
-                        class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-colors"
+                    <button
+                        class="bg-[#1db954] hover:bg-[#1ed760] text-black font-bold py-3 px-6 rounded-full transition-transform hover:scale-105"
                     >
                         Gerar
                     </button>
+
                 </div>
             </section>
         
@@ -69,11 +70,11 @@
             </section>
         </section>
 
-        <section id="history-section" class="hidden space-y-4">
+        <section id="history-section" class="hidden space-y-4 spotify-box">
             <h3 class="text-2xl font-semibold">Suas Playlists Anteriores</h3>
             <div id="history-list" class="space-y-3 max-h-96 overflow-y-auto pr-2">
             </div>
-            <button id="close-history-btn" class="text-sm text-gray-400 hover:text-white">
+            <button id="close-history-btn" class="text-sm text-[#1db954] hover:underline">
                 Voltar
             </button>
         </section>

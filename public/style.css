@@ -1,10 +1,10 @@
 .mood-card {
-  transition: all 0.3s ease;
-  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .mood-card:hover {
-  transform: translateY(-8px);
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
 }
 
 .mood-card .emoji {
@@ -86,4 +86,123 @@
 .toast-info {
   background-color: #3b82f6;
   color: white;
+}
+
+:root {
+  --spotify-green: #1db954;
+  --spotify-dark: #121212;
+  --spotify-card: #181818;
+  --spotify-card-hover: #242424;
+}
+
+.mood-card {
+  background-color: var(--spotify-card);
+  border-radius: 16px;
+  padding: 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.mood-card:hover {
+  background-color: var(--spotify-card-hover);
+  transform: translateY(-6px);
+}
+
+.mood-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--spotify-green), #1ed760);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  box-shadow: 0 10px 30px rgba(29, 185, 84, 0.45);
+}
+
+.mood-icon svg {
+  width: 32px;
+  height: 32px;
+  stroke-width: 2;
+  color: black;
+}
+
+.mood-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.mood-desc {
+  font-size: 0.9rem;
+  color: #b3b3b3;
+}
+
+.spotify-box {
+  background: #181818;
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.spotify-box h2 {
+  text-align: left;
+  font-weight: 700;
+}
+
+.history-card {
+  background: #181818;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background 0.3s ease;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.history-card:hover {
+  background: #242424;
+}
+
+.history-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.history-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #1db954, #1ed760);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  color: black;
+}
+
+.history-card h4 {
+  font-weight: 600;
+}
+
+.history-card span {
+  font-size: 0.8rem;
+  color: #b3b3b3;
+}
+
+.history-btn {
+  background: transparent;
+  border: 1px solid #1db954;
+  color: #1db954;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
+}
+
+.history-btn:hover {
+  background: #1db954;
+  color: black;
 }

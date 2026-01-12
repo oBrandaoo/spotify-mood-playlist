@@ -1,5 +1,46 @@
 let selectedTracks = new Set();
 
+const moodIcons = {
+  upbeat: `
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <path d="M9 18V5l12-2v13"/>
+      <circle cx="6" cy="18" r="3"/>
+      <circle cx="18" cy="16" r="3"/>
+    </svg>
+  `,
+  focus: `
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <circle cx="12" cy="12" r="9"/>
+      <path d="M12 7v5l3 3"/>
+    </svg>
+  `,
+  party: `
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <path d="M4 15l8-8 8 8"/>
+      <path d="M12 7v10"/>
+    </svg>
+  `,
+  chill: `
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <path d="M3 12h18"/>
+      <path d="M6 9h12M6 15h12"/>
+    </svg>
+  `,
+  workout: `
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <path d="M2 12h4M18 12h4"/>
+      <path d="M6 10v4M18 10v4"/>
+    </svg>
+  `,
+  nostalgic: `
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <rect x="4" y="4" width="16" height="16" rx="2"/>
+      <circle cx="12" cy="12" r="3"/>
+    </svg>
+  `
+};
+
+
 async function loadMoods() {
   const container = document.getElementById('mood-cards-container');
   renderMoodSkeletons();
@@ -21,28 +62,20 @@ function renderMoods(moods) {
   const container = document.getElementById('mood-cards-container');
   container.innerHTML = '';
 
-  const colorClasses = {
-    yellow: 'bg-yellow-500 hover:bg-yellow-600',
-    blue: 'bg-blue-500 hover:bg-blue-600',
-    pink: 'bg-pink-500 hover:bg-pink-600',
-    green: 'bg-green-500 hover:bg-green-600',
-    red: 'bg-red-500 hover:bg-red-600',
-    purple: 'bg-purple-500 hover:bg-purple-600'
-  };
-
-  moods.forEach(mood => {
-    const cardColor = colorClasses[mood.color] || 'bg-gray-500 hover:bg-gray-600';
+    moods.forEach(mood => {
     const card = document.createElement('article');
-    card.className = `mood-card ${cardColor} text-white rounded-xl p-6 shadow-lg flex flex-col items-center text-center space-y-3`;
-    
+
+    card.className = 'mood-card flex flex-col items-start text-left';
     card.onclick = () => searchAndDisplayTracks(mood.id, mood.name);
-    
+
     card.innerHTML = `
-      <div class="emoji">${mood.emoji}</div>
-      <h3 class="text-xl font-bold">${mood.name}</h3>
-      <p class="text-sm opacity-90">${mood.description}</p>
+      <div class="mood-icon">
+        ${moodIcons[mood.id] || ''}
+      </div>
+      <h3 class="mood-title">${mood.name}</h3>
+      <p class="mood-desc">${mood.description}</p>
     `;
-    
+
     container.appendChild(card);
   });
 }
