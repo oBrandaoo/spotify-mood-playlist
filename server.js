@@ -248,6 +248,10 @@ app.post('/api/generate-search-query', ensureAuthenticated, async (req, res) => 
     }
 });
 
+app.get('/api/test', (req, res) => {
+  res.json({ message: 'Se o servidor está rodando o código mais recente, você verá esta mensagem.' });
+});
+
 app.listen(PORT, () => {
     console.log(`Servidor rodando em http://localhost:${PORT}`);
 })
