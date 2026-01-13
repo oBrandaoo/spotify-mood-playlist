@@ -252,6 +252,16 @@ app.get('/api/test', (req, res) => {
   res.json({ message: 'Se o servidor está rodando o código mais recente, você verá esta mensagem.' });
 });
 
-app.listen(PORT, () => {
-    console.log(`Servidor rodando em http://localhost:${PORT}`);
-})
+async function startServer() {
+  try {
+    app.listen(PORT, () => {
+      console.log(`🚀 Servidor iniciado com sucesso na porta ${PORT}`);
+      console.log('📊 Todas as rotas foram registradas.');
+    });
+  } catch (error) {
+    console.error('💥 FALHA FATAL AO INICIAR O SERVIDOR:', error);
+    process.exit(1); 
+  }
+}
+
+startServer();
