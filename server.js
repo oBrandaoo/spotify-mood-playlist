@@ -40,7 +40,7 @@ passport.use(
         {
             clientID: process.env.CLIENT_ID,
             clientSecret: process.env.CLIENT_SECRET,
-            callbackURL: process.env.CALLBACK_URL || 'http://localhost:3000/callback'
+            callbackURL: process.env.CALLBACK_URL || 'https://spotify-mood-playlist-production.up.railway.app/callback'
         },
 
         function(accessToken, refreshToken, expires_in, profile, done) {
@@ -71,27 +71,21 @@ function ensureAuthenticated(req, res, next) {
   res.redirect('/login');
 }
 
-app.get('/login', (req, res, next) => {
+app.get('/login',
   passport.authenticate('spotify', {
-    scope: ['user-read-email', 'playlist-modify-public', 'playlist-modify-private']
-  }, (err, req, res, next) => {
-    if (err) {
-      console.error('Erro durante a autenticação do Spotify:', err.message);
-      if (err.message.includes('invalid_grant') || err.message.includes('Invalid Refresh Token')) {
-        req.logout(() => {
-          res.redirect('/login');
-        });
-      } else {
-        res.status(500).send('Ocorreu um erro durante o login com o Spotify.');
-      }
-    } else {
-      res.redirect('/');
-    }
-  })(req, res, next);
-});
+    scope: [
+      'user-read-email',
+      'playlist-modify-public',
+      'playlist-modify-private'
+    ]
+  })
+);
 
 app.get('/callback',
-  passport.authenticate('spotify', { failureRedirect: '/login' }),
+  passport.authenticate('spotify', {
+    failureRedirect: '/login',
+    failureMessage: true
+  }),
   (req, res) => {
     res.redirect('/');
   }
