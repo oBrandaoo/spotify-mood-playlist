@@ -25,11 +25,18 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
 
+app.set('trust proxy', 1);
+
 app.use(expressSession({
-    secret: 'uma-frase-secreta-bem-grande-e-dificil',
-    resave: false,
-    saveUninitialized: false
+  secret: process.env.SESSION_SECRET || 'uma-frase-secreta-bem-grande-e-dificil',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: true,
+    sameSite: 'none'
+  }
 }));
+
 app.use(passport.initialize());
 app.use(passport.session());
 
