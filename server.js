@@ -71,9 +71,24 @@ function ensureAuthenticated(req, res, next) {
   res.redirect('/login');
 }
 
-app.get('/login', passport.authenticate('spotify', {
-  scope: ['user-read-email', 'playlist-modify-public', 'playlist-modify-private'] // Permissões que estamos pedindo
-}));
+app.get('/login', (req, res, next) => {
+  passport.authenticate('spotify', {
+    scope: ['user-read-email', 'playlist-modify-public', 'playlist-modify-private']
+  }, (err, req, res, next) => {
+    if (err) {
+      console.error('Erro durante a autenticação do Spotify:', err.message);
+      if (err.message.includes('invalid_grant') || err.message.includes('Invalid Refresh Token')) {
+        req.logout(() => {
+          res.redirect('/login');
+        });
+      } else {
+        res.status(500).send('Ocorreu um erro durante o login com o Spotify.');
+      }
+    } else {
+      res.redirect('/');
+    }
+  })(req, res, next);
+});
 
 app.get('/callback',
   passport.authenticate('spotify', { failureRedirect: '/login' }),
